@@ -207,6 +207,10 @@ def create_ebook(sections):
     book.add_author("Steven W. Smith")
     book.add_author("Ph.D.")
 
+    # Add default NCX and NAV file
+    book.add_item(epub.EpubNcx())
+    book.add_item(epub.EpubNav())
+
     toc = []
 
     # Create the first page
@@ -214,18 +218,19 @@ def create_ebook(sections):
                          '{}</body></html>'.format("<h1>" + "The Scientist and Engineer\'s Guide to Digital Signal Processing" + "</h1>")
     cover_item = epub.EpubHtml(title="Cover",
                                 file_name='cover.htmlx',
-                                content=cover_content)
+                                content=cover_content,
+                                media_type = "application/xhtml+xml")
 
     book.add_item(cover_item)
     toc.append(cover_item)
 
     # Create toc from sections and sub sections
-    toc.append("nav")
 
     for section in sections:
         section_item = epub.EpubHtml(title=section["title"],
                                 file_name=section["file_name"],
-                                content=section["content"])
+                                content=section["content"],
+                                media_type="application/xhtml+xml")
         book.add_item(section_item)
         toc.append(section_item)
         for sub_section_index, sub_section_link in enumerate(section["links"]):
@@ -234,7 +239,8 @@ def create_ebook(sections):
                 title = ' - {}'.format(title)
             sub_section_item = epub.EpubHtml(title=title,
                                     file_name=sub_section_link["file_name"],
-                                    content=sub_section_link["content"])
+                                    content=sub_section_link["content"],
+                                    media_type="application/xhtml+xml")
 
             book.add_item(sub_section_item)
             toc.append(sub_section_item)
@@ -245,10 +251,6 @@ def create_ebook(sections):
 
     # Create table of contents
     book.toc = toc
-
-    # Add default NCX and NAV file
-    book.add_item(epub.EpubNcx())
-    book.add_item(epub.EpubNav())
 
     # Set spine
     book.spine = toc
@@ -267,7 +269,6 @@ def save_ebook(ebook, directory):
 
     # Save ebook to disk
     epub.write_epub(directory + "/" + ebook.title + ".epub", ebook, {})
-
 
 def print_progress(msg):
     print(("[ {:3d}% ] - " + msg).format(int(progress)))
