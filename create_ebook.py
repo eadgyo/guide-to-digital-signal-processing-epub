@@ -128,7 +128,7 @@ def retrieve_sub_section_images(sub_section_contents, section_index, sub_section
 
             section_images.append(epub.EpubItem(
                 file_name=img_name,
-                media_type=img_extension,
+                media_type="image/" + img_extension,
                 content=req.content
             ))
         else:
